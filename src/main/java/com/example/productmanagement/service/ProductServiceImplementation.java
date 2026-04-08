@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.productmanagement.dto.ProductRequestDto;
+import com.example.productmanagement.dto.ProductUpdateDto;
 import com.example.productmanagement.entity.Product;
 import com.example.productmanagement.repository.ProductRepository;
 
@@ -17,14 +19,20 @@ public class ProductServiceImplementation implements ProductService {
 	}
 	
 	@Override
-	public String addProduct(Product prod) {
-		repo.save(prod);
+	public String addProduct(ProductRequestDto prod) {
+		Product product = new Product();
+		product.setName(prod.getName());
+		product.setDescription(prod.getDescription());
+		product.setPrice(prod.getPrice());
+		product.setPhotoUrl(prod.getPhotoUrl());
+		repo.save(product);
 		return "Product added successfully!";
 	}
 	
 	@Override
-	public String updateProduct(Product prod) {
-		repo.save(prod);
+	public String updateProduct(ProductUpdateDto prod) {
+		Product product = new Product(prod.getId(), prod.getName(), prod.getPrice(), prod.getDescription(), prod.getPhotoUrl());
+		repo.save(product);
 		return "Product updated successfully!";
 	}
 	

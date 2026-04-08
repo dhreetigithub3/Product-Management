@@ -193,7 +193,7 @@
         document.getElementById('deleteProductForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const id = document.getElementById('prodId').value;
+            const prodId = document.getElementById('prodId').value;
             if (!confirm(`Are you absolutely sure you want to delete Product #${id}?`)) {
                 return;
             }
@@ -202,7 +202,7 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
             btn.disabled = true;
 
-            fetch(`/deleteProduct/${id}`, {
+            fetch(`/deleteProduct/${prodId}`, {
                 method: 'DELETE'
             })
                 .then(response => {
