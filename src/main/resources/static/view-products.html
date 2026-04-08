@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View All Products</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #4f46e5;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .header p {
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .table-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 16px 24px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 16px 24px;
+            color: #1e293b;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .prod-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: #e2e8f0;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="product_manage.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Product Management
+    </a>
+
+    <div class="header">
+        <h1>All Products</h1>
+        <p>A complete inventory of items currently in the system.</p>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price (₹)</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                <tr>
+                    <td colspan="5">
+                        <div class="loading-state">
+                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                            <p style="margin-top: 10px;">Loading products...</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('/viewAllProducts')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    const tbody = document.getElementById('productTableBody');
+                    tbody.innerHTML = ''; // clear loading state
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:30px; color:#64748b;">No products found in the database.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(product => {
+                        const tr = document.createElement('tr');
+                        const imgUrl = product.photoUrl ? product.photoUrl : 'https://via.placeholder.com/50?text=No+Img';
+
+                        tr.innerHTML = `
+                            <td><strong>#${product.id}</strong></td>
+                            <td><img src="${imgUrl}" alt="Product image" class="prod-img" onerror="this.src='https://via.placeholder.com/50?text=Failed'"></td>
+                            <td><strong>${product.name || 'N/A'}</strong></td>
+                            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${product.description || ''}">${product.description || 'No description'}</td>
+                            <td>₹${parseFloat(product.price).toFixed(2)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching products:', error);
+                    const tbody = document.getElementById('productTableBody');
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Error loading products. Please verify backend is running.</td></tr>`;
+                });
+        });
+    </script>
+</body>
+
+</html>

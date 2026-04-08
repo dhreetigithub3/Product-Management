@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Product</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #f59e0b;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header .icon-circle {
+            width: 60px;
+            height: 60px;
+            background-color: #fef3c7;
+            color: #f59e0b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
+        }
+
+        .form-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #334155;
+            transition: all 0.2s;
+            outline: none;
+            background-color: #f8fafc;
+        }
+
+        .form-control:focus {
+            border-color: #f59e0b;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #f59e0b;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #d97706;
+        }
+
+        .id-section {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .btn-fetch {
+            padding: 12px 20px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            height: 46px;
+        }
+
+        .btn-fetch:hover {
+            background-color: #2563eb;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        #updateFields {
+            display: none;
+        }
+
+        /* Hidden until product is retrieved */
+    </style>
+</head>
+
+<body>
+
+    <a href="product_manage.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Product Management
+    </a>
+
+    <div class="form-container">
+        <div class="form-header">
+            <div class="icon-circle">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+            <h1>Update Product</h1>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div class="id-section">
+            <div class="form-group col" style="margin-bottom: 0;">
+                <label for="prodId">Product ID to Update <span style="color: #ef4444;">*</span></label>
+                <input type="number" id="prodId" name="prodId" class="form-control" placeholder="e.g. 1001" required>
+            </div>
+            <button type="button" class="btn-fetch" id="btnFetchProduct">Find Product</button>
+        </div>
+
+        <form id="updateProductForm">
+            <div id="updateFields">
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" name="name" class="form-control" required>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col">
+                        <label for="productPrice">Price (₹)</label>
+                        <input type="number" id="productPrice" name="price" class="form-control" placeholder="0.00"
+                            step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group col">
+                        <label for="productPhotoUrl">Image URL</label>
+                        <input type="text" id="productPhotoUrl" name="photoUrl" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" name="description" class="form-control"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const btnFetch = document.getElementById('btnFetchProduct');
+        const updateForm = document.getElementById('updateProductForm');
+        const alertBox = document.getElementById('alertBox');
+
+        function showAlert(msg, isSuccess) {
+            alertBox.className = isSuccess ? 'alert alert-success' : 'alert alert-error';
+            alertBox.innerHTML = msg;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        }
+
+        btnFetch.addEventListener('click', () => {
+            const id = document.getElementById('prodId').value;
+            if (!id) {
+                showAlert('Please enter a valid Product ID', false);
+                return;
+            }
+
+            btnFetch.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btnFetch.disabled = true;
+
+            fetch(`/viewProduct/${id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Product not found');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('productName').value = data.name || '';
+                    document.getElementById('productPrice').value = data.price || '';
+                    document.getElementById('productPhotoUrl').value = data.photoUrl || '';
+                    document.getElementById('productDescription').value = data.description || '';
+
+                    document.getElementById('updateFields').style.display = 'block';
+                    showAlert('Product found. You can now edit its details.', true);
+                })
+                .catch(err => {
+                    document.getElementById('updateFields').style.display = 'none';
+                    showAlert('<i class="fa-solid fa-circle-xmark"></i> Product not found.', false);
+                })
+                .finally(() => {
+                    btnFetch.innerHTML = 'Find Product';
+                    btnFetch.disabled = false;
+                });
+        });
+
+        updateForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const id = document.getElementById('prodId').value;
+            const btnSubmit = document.querySelector('.btn-submit');
+
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            btnSubmit.disabled = true;
+
+            const productData = {
+                id: parseInt(id, 10),
+                name: document.getElementById('productName').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                photoUrl: document.getElementById('productPhotoUrl').value,
+                description: document.getElementById('productDescription').value
+            };
+
+            fetch(`/updateProduct`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        showAlert('<i class="fa-solid fa-circle-check"></i> Product updated successfully!', true);
+                        document.getElementById('updateFields').style.display = 'none';
+                        document.getElementById('prodId').value = '';
+                    } else {
+                        throw new Error('Update failed');
+                    }
+                })
+                .catch(error => {
+                    showAlert('<i class="fa-solid fa-circle-xmark"></i> Failed to update product.', false);
+                })
+                .finally(() => {
+                    btnSubmit.innerHTML = '<i class="fa-solid fa-save"></i> Save Changes';
+                    btnSubmit.disabled = false;
+                });
+        });
+    </script>
+</body>
+
+</html>

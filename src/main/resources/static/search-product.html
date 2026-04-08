@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Product</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #0ea5e9;
+        }
+
+        .search-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .search-container .icon-circle {
+            width: 70px;
+            height: 70px;
+            background-color: #e0f2fe;
+            color: #0ea5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.75rem;
+        }
+
+        .search-container h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .search-container p {
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            color: #1e293b;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        }
+
+        .search-btn {
+            padding: 0 30px;
+            background-color: #0ea5e9;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #0284c7;
+        }
+
+        .search-result {
+            margin-top: 20px;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            display: none;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .result-item {
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .result-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            background-color: #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .result-details h3 {
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .result-details p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .result-price {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 1.1rem;
+        }
+
+        .error-msg {
+            padding: 20px;
+            color: #ef4444;
+            text-align: center;
+            display: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="product_manage.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Product Management
+    </a>
+
+    <div class="search-container">
+        <div class="icon-circle">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h1>Search Product</h1>
+        <p>Find a specific product using its unique Product ID.</p>
+
+        <form id="searchForm">
+            <div class="search-box">
+                <input type="number" id="prodId" name="prodId" class="search-input"
+                    placeholder="Enter product ID (e.g. 1001)..." required>
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+        </form>
+
+        <!-- Success Result -->
+        <div id="searchResult" class="search-result"></div>
+
+        <!-- Error / Not found -->
+        <div id="errorMsg" class="error-msg">
+            <i class="fa-solid fa-circle-exclamation"></i> Product not found! Please check the ID and try again.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const btn = document.querySelector('.search-btn');
+            const resultBox = document.getElementById('searchResult');
+            const errorBox = document.getElementById('errorMsg');
+            const prodId = document.getElementById('prodId').value;
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+            resultBox.style.display = 'none';
+            errorBox.style.display = 'none';
+
+            fetch(`/viewProduct/${prodId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Not found');
+                    return response.json();
+                })
+                .then(data => {
+                    const imgUrl = data.photoUrl ? data.photoUrl : 'https://via.placeholder.com/80?text=No+Img';
+
+                    resultBox.innerHTML = `
+                        <div class="result-item">
+                            <img src="${imgUrl}" alt="Product Image" class="result-img" onerror="this.src='https://via.placeholder.com/80?text=Failed'">
+                            <div class="result-details">
+                                <span style="font-size: 0.8rem; color:#94a3b8; text-transform:uppercase; font-weight:bold;">ID: #${data.id}</span>
+                                <h3>${data.name || 'Unknown Item'}</h3>
+                                <p>${data.description || 'No description available for this product.'}</p>
+                                <div class="result-price">₹${data.price ? parseFloat(data.price).toFixed(2) : '0.00'}</div>
+                            </div>
+                        </div>
+                    `;
+                    resultBox.style.display = 'block';
+                })
+                .catch(error => {
+                    errorBox.style.display = 'block';
+                })
+                .finally(() => {
+                    btn.innerHTML = 'Search';
+                    btn.disabled = false;
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: #ef4444;
+        }
+
+        .danger-container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border: 1px solid #fecaca;
+            text-align: center;
+        }
+
+        .danger-container .icon-circle {
+            width: 70px;
+            height: 70px;
+            background-color: #fef2f2;
+            color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.75rem;
+        }
+
+        .danger-container h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 15px;
+        }
+
+        .danger-container p {
+            color: #64748b;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            color: #1e293b;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .btn-danger {
+            width: 100%;
+            padding: 14px;
+            background-color: #ef4444;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .warning-text {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="product_manage.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Product Management
+    </a>
+
+    <div class="danger-container">
+        <div class="icon-circle">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1>Delete Product</h1>
+        <p>Please enter the Product ID below to permanently remove it from the system catalog.</p>
+
+        <div id="alertBox" class="alert"></div>
+
+        <form id="deleteProductForm">
+            <div class="form-group">
+                <label for="prodId">Product ID <span style="color: #ef4444;">*</span></label>
+                <input type="number" id="prodId" name="prodId" class="form-control" placeholder="e.g. 1001" required>
+            </div>
+
+            <button type="submit" class="btn-danger">
+                <i class="fa-solid fa-trash"></i> Delete Permanently
+            </button>
+        </form>
+
+        <div class="warning-text">
+            <i class="fa-solid fa-circle-info"></i> Warning: This action cannot be undone.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('deleteProductForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const id = document.getElementById('prodId').value;
+            if (!confirm(`Are you absolutely sure you want to delete Product #${id}?`)) {
+                return;
+            }
+
+            const btn = document.querySelector('.btn-danger');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+            btn.disabled = true;
+
+            fetch(`/deleteProduct/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    const alertBox = document.getElementById('alertBox');
+                    if (response.ok) {
+                        alertBox.className = 'alert alert-success';
+                        alertBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Product deleted successfully!';
+                        alertBox.style.display = 'block';
+                        document.getElementById('deleteProductForm').reset();
+                    } else {
+                        throw new Error('Failed to delete');
+                    }
+                })
+                .catch(error => {
+                    const alertBox = document.getElementById('alertBox');
+                    alertBox.className = 'alert alert-error';
+                    alertBox.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Error deleting product. Make sure the ID exists.';
+                    alertBox.style.display = 'block';
+                })
+                .finally(() => {
+                    btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete Permanently';
+                    btn.disabled = false;
+                    setTimeout(() => { document.getElementById('alertBox').style.display = 'none'; }, 5000);
+                });
+        });
+    </script>
+</body>
+
+</html>
